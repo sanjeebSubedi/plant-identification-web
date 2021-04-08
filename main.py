@@ -5,14 +5,18 @@ from flask import Flask, render_template, request, jsonify
 from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
+import psycopg2
+
 app = Flask(__name__)
 
-
-indices = {0: 'Alien', 1: 'Guava', 2: 'Jackfruit', 3: 'Lychee', 4: 'Potato', 5: 'Rose'}
+indices = {0: 'Catweed', 1: 'Guava', 2: 'Jackfruit', 3: 'Lychee', 4: 'Potato', 5: 'Rose'}
+# indices = {0: 'Indian_rhododendron', 1: 'Catweed', 2: 'Guava', 3: 'Barberry', 4: 'Jackfruit', 5: 'Mulberry', 6: 'Chestnut', 7: 'Lychee', 8: 'Orange', 9: 'Mint', 10: 'Potato', 11: 'Rose'}
 
 def get_model():
     global model
-    model = load_model('mobilenet_model_6_classes.h5')
+    model_name = 'mobilenet_model_6_classes.h5'
+    # model_name = 'resnet_model_12_classes.h5'
+    model = load_model(model_name)
     print('Model successfully loaded')
 
 def preprocess_image(image):
@@ -33,7 +37,7 @@ def get_top_3(probability_array, indices):
     top_probs = {}
     for item in top3:
       label = indices.get(item)
-      label=label.replace('_', ' ').capitalize()
+    #   label=label.replace('_', ' ').capitalize()
       probab = probability_array.flatten()[item]
       top_probs[label] = round((probab*100),2)
     return top_probs
@@ -41,11 +45,11 @@ def get_top_3(probability_array, indices):
 print('Loading model...')
 get_model()
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def main_page():
     return render_template('main_page.html')
 
-@app.route('/predict', methods=['POST','GET'])
+@app.route('/', methods=['POST'])
 def predict():
     message = request.get_json(force=True)
     encoded = message['image']
@@ -54,8 +58,36 @@ def predict():
     preprocessed_image = preprocess_image(image)
     prediction_array = get_prediction_array(preprocessed_image)
     response = get_top_3(prediction_array, indices)
-    response = { 'top3' : response }
+    response = { 'top3' : response}
     return jsonify(response)
 
+@app.route('/details/<string:plant_name>', methods=['GET'])
+def getDetails(plant_name):
+    conn = psycopg2.connect(
+        host='localhost',
+        database='plantdb',
+        user='postgres',
+        password='postgres'
+    )
+    cursor = conn.cursor()
+    cursor.execute("select * from plants where common_name='"+plant_name.lower()+"';")
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    columns = [col_name.replace("_", " ").capitalize() for col_name in columns]
+    json_data = {}
+    rows = rows[0]
+    for i, column in enumerate(columns):
+        if i==0:
+            json_data[column] = rows[i].replace("_", " ").capitalize()
+        else:
+            json_data[column]=rows[i]
+    print(json_data)
+    for item in json_data:
+        print(item)
+        print(json_data.get(item))             
+    cursor.close()
+    conn.close()
+    return render_template('details_page.html', data = json_data)
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
