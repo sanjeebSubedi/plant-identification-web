@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  background-color: #011a3a;
+}
+
+.content {
+  background-color: #011a3a;
+  /* max-width: 500px; */
+  margin: auto;
+  padding: 10px;
+  color: #83def5;
+  display: flex;
+  height: 100vh;
+  width: 100vh;
+}
+</style>
+</head>
+<body>
+<div class="content">
+    <ul>
+        {% for item in data %}
+            <h3> {{item}}: {{data.get(item)}} </h3>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>
