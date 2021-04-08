@@ -1,3 +1,6 @@
+var host = 'http://192.168.1.5:5000'
+// var host = 'localhost:5000'
+
 $("#predict-button").hide();
 $("#top-3-label").hide();
 let base64Image;
@@ -25,12 +28,12 @@ function readURL(input) {
 $("#select-button").change(function () {
 	readURL(this);
 });
+var top3;
 $("#predict-button").click(function (event) {
 	$("#top-3-label").show();
 	let message = { image: base64Image };
 	console.log(message);
-	$.post(
-		"http://localhost:5000/predict",
+	$.post(host,
 		JSON.stringify(message),
 		function (response) {
 			top3 = Object.values(response)[0];
@@ -40,4 +43,33 @@ $("#predict-button").click(function (event) {
 			$("#top-3").text(Object.keys(top3)[2] + ": " + Object.values(top3)[2] + "%");
 		}
 	);
+});
+
+$("#top-1").click(function(event) {
+	let plant_name = Object.keys(top3)[0];
+	plant_name = plant_name.toLowerCase()
+	console.log(plant_name);
+	let endpoint = "/details/"+plant_name
+	$("html").load(endpoint);
+});
+
+$("#top-2").click(function(event) {
+	let plant_name = Object.keys(top3)[1];
+	plant_name = plant_name.toLowerCase()
+	console.log(plant_name);
+	let endpoint = "/details/"+plant_name
+	$("html").load(endpoint);
+});
+
+$("#top-3").click(function(event) {
+	let plant_name = Object.keys(top3)[2];
+	plant_name = plant_name.toLowerCase()
+	console.log(plant_name);
+	let endpoint = "/details/"+plant_name
+	$("html").load(endpoint);
+	// $.get("details/rose",
+	// 	function (response) {
+	// 		window.location.href = response.redirect
+	// 	}
+	// );
 });
