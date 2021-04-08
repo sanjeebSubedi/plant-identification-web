@@ -13,6 +13,10 @@ p.withMargin {
     color: #83def5
 }
 
+.hyperlink {
+    cursor: pointer;
+}
+
 * {
     color: #e9eef3
 }
