@@ -2,6 +2,9 @@
 <html>
 
 <head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel= "stylesheet" type= "text/css" 
 	href= "{{ url_for('static', filename='styles/main_page.css') }}">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -22,9 +25,9 @@
 		</p>
 		<p class="withMargin"></p>
 		<h2 class="blueColor" style="text-align:center" id="top-3-label">Top 3 Predictions</h2>
-		<p id="top-1"> </p>
-		<p id="top-2"> </p>
-		<p id="top-3"> </p>
+		<u><p id="top-1" class="hyperlink"> </p></u>
+		<u><p id="top-2" class="hyperlink"> </p></u>
+		<u><p id="top-3" class="hyperlink"> </p></u>
 	</div>
 	<script type=text/javascript src="{{
 		url_for('static', filename='javascript/main_page.js') }}"></script>
