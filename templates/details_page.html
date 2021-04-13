@@ -14,19 +14,47 @@ body {
   padding: 10px;
   color: #83def5;
   display: flex;
-  height: 100vh;
+  height: auto;
   width: 100vh;
 }
 </style>
 </head>
 <body>
+  <p><h1 id='plant_name' style="text-align: center; color: #83def5;">{{data.get('Common name')}}</h1></p>
+  <p style="text-align: center"><img id="plant_image" src="" width="600" height="400"/></p>
 <div class="content">
+  <p>
     <ul>
         {% for item in data %}
+        {% if item == 'Problems'%}
+          <p><h2>{{item}}</h2></p>
+          <ul>
+            <li>{{data.get(item)}}</li>
+          </ul>
+
+            {% elif item == 'Cultivation'%}
+            <p><h2>{{item}}</h2></p>
+            <ul>
+              <li>{{data.get(item)}}</li>
+            </ul>
+
+          {% elif item == 'Characteristics'%}
+          <p> <h2>Characteristics</h2>
+            {% for feature in data.get(item)%} </p>
+              <ul>
+                <li>{{feature}}</li>
+              </ul>
+            {% endfor %}
+            {% else %}
             <h3> {{item}}: {{data.get(item)}} </h3>
+            {% endif %}
         {% endfor %}
     </ul>
+  </p>
 </div>
-
+<script type="text/javascript">
+  var plant_name = document.getElementById("plant_name").innerHTML;
+  document.getElementById("plant_image").src = "../static/"+plant_name+".jpg";
+  </script>
 </body>
 </html>
